@@ -2,6 +2,7 @@ option(USE_STATIC_MBEDTLS_LIBRARY "Build Mbed TLS static library." ON)
 option(USE_SHARED_MBEDTLS_LIBRARY "Build Mbed TLS shared library." OFF)
 option(LINK_WITH_PTHREAD "Explicitly link Mbed TLS library to pthread." OFF)
 option(LINK_WITH_TRUSTED_STORAGE "Explicitly link Mbed TLS library to trusted_storage." OFF)
+set(USE_STATIC_MBEDTLS_LIBRARY ON)
 
 # Set the project root directory if it's not already defined, as may happen if
 # the library folder is included directly by a parent project, without
@@ -332,7 +333,7 @@ foreach(target IN LISTS target_libraries)
                $<INSTALL_INTERFACE:include/>
         PRIVATE ${MBEDTLS_DIR}/library/
                 # Needed to include psa_crypto_driver_wrappers.h
-                ${CMAKE_CURRENT_BINARY_DIR})
+    )
     # Pass-through MBEDTLS_CONFIG_FILE and MBEDTLS_USER_CONFIG_FILE
     if(MBEDTLS_CONFIG_FILE)
         target_compile_definitions(${target}

@@ -575,6 +575,7 @@ int mbedtls_ctr_drbg_seed(mbedtls_ctr_drbg_context *ctx,
 #else
     if ((ret = mbedtls_aes_setkey_enc(&ctx->aes_ctx, key,
                                       MBEDTLS_CTR_DRBG_KEYBITS)) != 0) {
+        printf("mbedtls_aes_setkey_enc() => %d\n", ret);
         return ret;
     }
 #endif
@@ -582,6 +583,7 @@ int mbedtls_ctr_drbg_seed(mbedtls_ctr_drbg_context *ctx,
     /* Do the initial seeding. */
     if ((ret = mbedtls_ctr_drbg_reseed_internal(ctx, custom, len,
                                                 nonce_len)) != 0) {
+        printf("mbedtls_ctr_drbg_reseed_internal() => %d\n", ret);
         return ret;
     }
     return 0;

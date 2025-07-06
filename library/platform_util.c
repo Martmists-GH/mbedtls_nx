@@ -11,7 +11,7 @@
  * mbedtls_config.h, which pulls in glibc's features.h. Harmless on other platforms
  * except OpenBSD, where it stops us accessing explicit_bzero.
  */
-#if !defined(_POSIX_C_SOURCE) && !defined(__OpenBSD__)
+#if (!defined(_POSIX_C_SOURCE) || _POSIX_C_SOURCE < 200112L) && !defined(__OpenBSD__)
 #define _POSIX_C_SOURCE 200112L
 #endif
 
@@ -25,6 +25,7 @@
 #include "mbedtls/platform_util.h"
 #include "mbedtls/platform.h"
 #include "mbedtls/threading.h"
+#include "mbedtls/platform_time.h"
 
 #include <stddef.h>
 
@@ -224,15 +225,17 @@ void (*mbedtls_test_hook_test_fail)(const char *, int, const char *);
 #include <unistd.h>
 #endif \
     /* !_WIN32 && (unix || __unix || __unix__ || (__APPLE__ && __MACH__) || __HAIKU__ || __midipix__) */
-#if (defined(_POSIX_VERSION) && _POSIX_VERSION >= 199309L) || defined(__HAIKU__)
+#if (defined(_POSIX_VERSION) && _POSIX_VERSION >= 199309L) || defined(__HAIKU__) || defined(__SWITCH__)
 mbedtls_ms_time_t mbedtls_ms_time(void)
 {
     int ret;
     struct timespec tv;
     mbedtls_ms_time_t current_ms;
 
-#if defined(__linux__) && defined(CLOCK_BOOTTIME) || defined(__midipix__)
+#if (defined(__linux__) && defined(CLOCK_BOOTTIME) || defined(__midipix__))
     ret = clock_gettime(CLOCK_BOOTTIME, &tv);
+#elif defined(__SWITCH__)
+    ret = -1;
 #else
     ret = clock_gettime(CLOCK_MONOTONIC, &tv);
 #endif

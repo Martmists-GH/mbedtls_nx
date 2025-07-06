@@ -31,7 +31,7 @@
 
 #if !defined(unix) && !defined(__unix__) && !defined(__unix) && \
     !defined(__APPLE__) && !defined(_WIN32) && !defined(__QNXNTO__) && \
-    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__MVS__)
+    !defined(__HAIKU__) && !defined(__midipix__) && !defined(__MVS__) && !defined(__SWITCH__)
 #error \
     "Platform entropy sources only work on Unix and Windows, see MBEDTLS_NO_PLATFORM_ENTROPY in mbedtls_config.h"
 #endif
@@ -145,13 +145,11 @@ static int sysctl_arnd_wrapper(unsigned char *buf, size_t buflen)
 #endif /* KERN_ARND */
 #endif /* __FreeBSD__ || __NetBSD__ */
 
-#include <stdio.h>
+extern void _ZN2nn6crypto36GenerateCryptographicallyRandomBytesEPvm(void*, unsigned long);
 
 int mbedtls_platform_entropy_poll(void *data,
                                   unsigned char *output, size_t len, size_t *olen)
 {
-    FILE *file;
-    size_t read_len;
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     ((void) data);
 
@@ -180,21 +178,7 @@ int mbedtls_platform_entropy_poll(void *data,
 
     *olen = 0;
 
-    file = fopen("/dev/urandom", "rb");
-    if (file == NULL) {
-        return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
-    }
-
-    /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
-    mbedtls_setbuf(file, NULL);
-
-    read_len = fread(output, 1, len, file);
-    if (read_len != len) {
-        fclose(file);
-        return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
-    }
-
-    fclose(file);
+    _ZN2nn6crypto36GenerateCryptographicallyRandomBytesEPvm(output, len);
     *olen = len;
 
     return 0;
