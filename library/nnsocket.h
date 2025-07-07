@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#include <sys/types.h>
+
 typedef uint32_t u32;
 typedef int32_t s32;
 typedef uint16_t u16;
@@ -71,10 +73,13 @@ struct addrinfo {
     struct addrinfo* ai_next;
 };
 
+#if defined(__NEED_struct_iovec) && !defined(__DEFINED_struct_iovec)
 struct iovec {
     void *iov_base; /* Starting address */
     size_t iov_len; /* Length in bytes */
 };
+#define __DEFINED_struct_iovec
+#endif
 
 /* Structure describing messages sent by
    `sendmsg' and received by `recvmsg'.  */
@@ -149,7 +154,7 @@ int nnsocketSocket(int,int,int);
 int nnsocketWrite(int domain, int type, int protocol);
 int nnsocketRead(int,int,int);
 u32 nnsocketClose(int); // returns nn::Result
-int nnsocketSelect(int,struct fd_set *,fd_set *,fd_set *,struct timeval *);
+int nnsocketSelect(int,fd_set *,fd_set *,fd_set *,struct timeval *);
 void nnsocketPoll(struct pollfd *,ulong,int);
 int nnsocketFcntl(int,int,...);
 void nnsocketInetPton(int,char const*,void *);
