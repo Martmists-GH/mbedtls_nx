@@ -65,7 +65,7 @@ static int wsa_init_done = 0;
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
-#if __SWITCH__
+#if defined(__SWITCH__)
 #include "nnsocket.h"
 #else
 #include <netdb.h>
@@ -112,7 +112,7 @@ static int net_prepare(void)
         wsa_init_done = 1;
     }
 #else
-#if !defined(EFIX64) && !defined(EFI32)
+#if !defined(EFIX64) && !defined(EFI32) && !defined(__SWITCH__)
     signal(SIGPIPE, SIG_IGN);
 #endif
 #endif
