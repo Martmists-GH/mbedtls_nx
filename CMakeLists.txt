@@ -198,7 +198,7 @@ include(CheckCCompilerFlag)
 
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD 99)
-add_compile_definitions(-D_XOPEN_SOURCE=700)
+add_compile_definitions(_XOPEN_SOURCE=700)
 
 if(CMAKE_COMPILER_IS_GNU)
     # some warnings we want are not available with old GCC versions
